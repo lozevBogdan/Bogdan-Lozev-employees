@@ -124,7 +124,7 @@
                 if (response.status === 500) {
                     throw new Error('Check your file format and content and try again, if you continue receiving this message - contact an administrator.');
                 } else {
-                    throw new Error('An unexpected error occurred. Status code: ' + response.status);
+                    throw new Error('An unexpected error occurred. Status code: ' + response.status + 'Please contact an administrator.');
                 }
             }
 
