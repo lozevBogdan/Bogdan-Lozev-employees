@@ -65,7 +65,7 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
-		<finalName>Bogdan-Lozev-employees</finalName>
+		<finalName>bogdan-lozev-employees</finalName>
 	</build>
 
 </project>

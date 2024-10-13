@@ -1,4 +1,4 @@
-FROM openjdk:17
+FROM openjdk:21
 EXPOSE 8080
-ADD target/Bogdan-Lozev-employees.jar Bogdan-Lozev-employees.jar
-ENTRYPOINT ["java", "-jar", "/Bogdan-Lozev-employees.jar"]
+ADD target/bogdan-lozev-employees.jar bogdan-lozev-employees.jar
+ENTRYPOINT ["java", "-jar", "/bogdan-lozev-employees.jar"]
