@@ -18,6 +18,7 @@
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
         }
         h2 {
             text-align: center;
@@ -29,6 +30,8 @@
         input[type="file"] {
             padding: 10px;
             font-size: 16px;
+            width: 100%;
+            box-sizing: border-box;
         }
         button {
             padding: 10px 20px;
@@ -38,6 +41,9 @@
             border-radius: 5px;
             font-size: 16px;
             cursor: pointer;
+            margin-top: 10px;
+            width: 100%;
+            box-sizing: border-box;
         }
         button:hover {
             background-color: #0056b3;
@@ -59,9 +65,28 @@
         th, td {
             padding: 10px;
             text-align: left;
+            word-wrap: break-word;
         }
         th {
             background-color: #f2f2f2;
+        }
+        @media (max-width: 600px) {
+            h2 {
+                font-size: 1.5em;
+            }
+            button {
+                padding: 15px;
+                font-size: 18px;
+            }
+            input[type="file"] {
+                font-size: 18px;
+            }
+            th, td {
+                font-size: 14px;
+            }
+            .message {
+                font-size: 14px;
+            }
         }
     </style>
 </head>
@@ -122,16 +147,15 @@
         .then(response => {
             if (!response.ok) {
                 if (response.status === 500) {
-                    throw new Error('Check your file format and content and try again, if you continue receiving this message - contact an administrator.');
+                    throw new Error('Check your file format and content and try again. If you continue receiving this message, contact an administrator.');
                 } else {
-                    throw new Error('An unexpected error occurred. Status code: ' + response.status + 'Please contact an administrator.');
+                    throw new Error('An unexpected error occurred. Status code: ' + response.status + '. Please contact an administrator.');
                 }
             }
 
             return response.json();
         })
         .then(data => {
-
             if (data.length > 0) {
                 resultTable.style.display = 'table';
                 tbody.innerHTML = '';
