@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Common Work Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+        }
+        .file-upload {
+            margin: 20px 0;
+            text-align: center;
+        }
+        input[type="file"] {
+            padding: 10px;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .message {
+            text-align: center;
+            margin-top: 20px;
+            color: red;
+            font-weight: bold;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Upload Employee Common Projects Data in CSV</h2>
+
+    <div class="file-upload">
+        <form id="fileUploadForm" action="/upload-and-process" method="post" enctype="multipart/form-data">
+            <label for="fileInput">Choose a CSV file:</label><br><br>
+            <input type="file" id="fileInput" name="file" accept=".csv"><br><br>
+            <button type="submit">Upload and Process</button>
+        </form>
+    </div>
+
+    <div id="output">
+        <p id="message" class="message" style="display: none;"></p>
+        <table id="resultTable" style="display: none;">
+            <thead>
+            <tr>
+                <th>Employee ID #1</th>
+                <th>Employee ID #2</th>
+                <th>Project ID</th>
+                <th>Days worked</th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    document.getElementById('fileUploadForm').onsubmit = function (event) {
+        event.preventDefault();
+
+        const fileInput = document.getElementById('fileInput');
+        const messageElement = document.getElementById('message');
+        const resultTable = document.getElementById('resultTable');
+        const tbody = resultTable.querySelector('tbody');
+
+        messageElement.style.display = 'none';
+        resultTable.style.display = 'none';
+        tbody.innerHTML = '';
+
+        if (!fileInput.files.length) {
+            messageElement.textContent = 'Please choose a file from your system!';
+            messageElement.style.display = 'block';
+            return;
+        }
+
+        const formData = new FormData(event.target);
+
+        fetch('/upload/employees', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) {
+                if (response.status === 500) {
+                    throw new Error('Server error occurred (500). Please try again later or contact an administrator.');
+                } else {
+                    throw new Error('An unexpected error occurred. Status code: ' + response.status);
+                }
+            }
+
+            return response.json();
+        })
+        .then(data => {
+
+            if (data.length > 0) {
+                resultTable.style.display = 'table';
+                tbody.innerHTML = '';
+
+                data.forEach(row => {
+                    const tr = document.createElement('tr');
+
+                    const empId1 = document.createElement('td');
+                    empId1.textContent = row.employeeId1;
+                    tr.appendChild(empId1);
+
+                    const empId2 = document.createElement('td');
+                    empId2.textContent = row.employeeId2;
+                    tr.appendChild(empId2);
+
+                    const projectId = document.createElement('td');
+                    projectId.textContent = row.projectId;
+                    tr.appendChild(projectId);
+
+                    const daysWorked = document.createElement('td');
+                    daysWorked.textContent = row.daysWorked;
+                    tr.appendChild(daysWorked);
+
+                    tbody.appendChild(tr);
+                });
+            } else {
+                messageElement.textContent = 'No common work data found in the uploaded CSV file!';
+                messageElement.style.display = 'block';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            messageElement.textContent = error.message || 'An error occurred during file upload!';
+            messageElement.style.display = 'block';
+        });
+    };
+</script>
+
+</body>
+</html>
